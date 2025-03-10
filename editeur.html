@@ -1,0 +1,160 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>editeur</title>
+    <style>
+        #nav{
+            width: 100%;
+            height: 2CM;
+            background-color: rgb(48, 42, 42);
+            border-style: none;
+        }
+        button{
+            margin-top : 0.2CM;
+            padding: 0.5cm;
+            border-radius: 12px;
+        }
+        #zoneDeTexte{
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            background-color: rgb(6, 6, 8);
+            height: 85%;
+            color: white;
+            padding: 0.5CM;
+            overflow-y: scroll;
+        }
+    </style>
+    <script>
+        document.addEventListener("keydown",(event)=>{
+            const zone = document.getElementById("zoneDeTexte")
+            if(event.key == '('){
+                let firstValue = ""
+                firstValue = zone.innerText 
+                firstValue += "()"
+                zone.innerText = ""
+                setTimeout(()=>{
+                    zone.innerText = firstValue
+
+                    //ramener le curseur à la fin   
+                    zone.focus()
+                    const range = document.createRange()
+                    const selection = window.getSelection()
+                    range.selectNodeContents(zone)
+                    range.collapse(false)
+                    selection.removeAllRanges()
+                    selection.addRange(range)
+                    console.log(firstValue)
+                },100)
+            }
+            if(event.key == '['){
+                let firstValue = ""
+                firstValue = zone.innerText 
+                firstValue += "[]"
+               zone.innerText = ""
+                setTimeout(()=>{
+                    zone.innerText = firstValue
+                    console.log(firstValue)
+                    //ramener le curseur à la fin   
+                    zone.focus()
+                    const range = document.createRange()
+                    const selection = window.getSelection()
+                    range.selectNodeContents(zone)
+                    range.collapse(false)
+                    selection.removeAllRanges()
+                    selection.addRange(range)
+                },100)
+            }
+            if(event.key == '{'){
+                let firstValue = ""
+                firstValue = zone.innerText 
+                firstValue += "{}"
+               zone.innerText = ""
+                setTimeout(()=>{
+                    zone.innerText = firstValue
+                    console.log(firstValue)
+                    //ramener le curseur à la fin   
+                    zone.focus()
+                    const range = document.createRange()
+                    const selection = window.getSelection()
+                    range.selectNodeContents(zone)
+                    range.collapse(false)
+                    selection.removeAllRanges()
+                    selection.addRange(range)
+                },100)
+            }
+            if(event.key == '£'){
+                let firstValue = ""
+                firstValue = zone.innerText 
+                firstValue += "________________________________________________________________________________________\n"
+               zone.innerText = ""
+                setTimeout(()=>{
+                    zone.innerText = firstValue
+                    console.log(firstValue)
+                    //ramener le curseur à la fin   
+                    zone.focus()
+                    const range = document.createRange()
+                    const selection = window.getSelection()
+                    range.selectNodeContents(zone)
+                    range.collapse(false)
+                    selection.removeAllRanges()
+                    selection.addRange(range)
+                },100)
+            }
+            if(event.key == '§'){
+                let firstValue = ""
+                firstValue = zone.innerText 
+                firstValue += "|+--------------------------------------------------+|\n\n|+--------------------------------------------------+|"
+               zone.innerText = ""
+                setTimeout(()=>{
+                    zone.innerText = firstValue
+                    console.log(firstValue)
+                    //ramener le curseur à la fin   
+                    zone.focus()
+                    const range = document.createRange()
+                    const selection = window.getSelection()
+                    range.selectNodeContents(zone)
+                    range.collapse(false)
+                    selection.removeAllRanges()
+                    selection.addRange(range)
+                },100)
+            }
+            zone.style.textShadow  = "0PX 0PX 3PX white,0PX 0PX 3PX white,0PX 0PX 3PX white"
+            setTimeout(()=>{
+                zone.style.textShadow = "none"
+            },1000)
+            
+        })
+        setInterval(function(){
+            const zone = document.getElementById("zoneDeTexte")
+            console.log(zone.innerText)
+            localStorage.setItem("texte",zone.innerText)
+        },10)
+        document.addEventListener("DOMContentLoaded",()=>{
+            const stocked = localStorage.getItem("texte")
+            console.log(stocked)
+            const zone = document.getElementById("zoneDeTexte")
+            const fichier = document.getElementById("fichier")
+            fichier.addEventListener("change",(event)=>{
+                const file = event.target.files[0]
+                if(file){
+                    const reader = new FileReader
+                    reader.onload = function(e){
+                        zone.innerHTML = e.target.result
+                    }
+                    reader.readAsText(file)
+                }
+            })
+            zone.innerText = stocked
+            
+        })
+    </script>
+</head>
+<body>
+    <div id="nav">
+        <input type="file" name="fichier" id="fichier" accept=".txt">
+    </div>
+    <div id="zoneDeTexte" contenteditable="true" aria-placeholder="fichier" spellcheck="false">
+
+    </div>
+</body>
+</html>
