@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pour mon Ivanna</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Birthstone&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --rose: #ffafcc;
+            --hot-pink: #ff2e63;
+            --gold: #d4af37;
+            --dark: #2a2a2a;
+            --accent: #ff6b9d;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0;
+            padding: 0;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #ffe5ec 0%, #fff0f7 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            overflow: hidden;
+        }
+
+        #app {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .view {
+            position: absolute;
+            width: 85%;
+            max-width: 550px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 45px 35px;
+            box-shadow: 0 25px 50px rgba(255, 46, 99, 0.15);
+            text-align: center;
+            border: 1.5px solid rgba(255, 174, 204, 0.4);
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+        }
+
+        .view.active { 
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        h1 { 
+            font-family: 'Birthstone', cursive; 
+            font-size: 4.5rem; 
+            color: var(--hot-pink); 
+            margin-bottom: 10px;
+        }
+
+        h2 { 
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem; 
+            color: var(--dark); 
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+        }
+
+        .description {
+            font-size: 0.95rem;
+            color: #777;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--hot-pink) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            box-shadow: 0 10px 25px rgba(255, 46, 99, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(255, 46, 99, 0.35);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 2px solid var(--hot-pink);
+            color: var(--hot-pink);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 8px 5px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--hot-pink);
+            color: white;
+        }
+
+        /* JEUX */
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 25px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--hot-pink), var(--gold));
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: #999;
+            margin: 10px 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        .choice {
+            padding: 16px;
+            border: 2px solid #e5e5e5;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .choice:hover {
+            border-color: var(--hot-pink);
+            transform: translateY(-3px);
+        }
+
+        .choice.selected {
+            background: linear-gradient(135deg, #fff5f8, white);
+            border-color: var(--hot-pink);
+            color: var(--hot-pink);
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 25px 0;
+        }
+
+        .card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--rose), #ffb3d9);
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 46, 99, 0.2);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card.matched {
+            background: linear-gradient(135deg, var(--gold), #ffda6f);
+        }
+
+        .slider-box {
+            margin: 30px 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 10px;
+            background: #e8e8e8;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--hot-pink), var(--accent));
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 46, 99, 0.4);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--hot-pink), var(--accent));
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 12px rgba(255, 46, 99, 0.4);
+        }
+
+        .reveal-btn {
+            width: 150px;
+            height: 150px;
+            border: 2px dashed var(--hot-pink);
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 3rem;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+        }
+
+        .reveal-btn:hover {
+            border-style: solid;
+            transform: scale(1.1);
+        }
+
+        .reveal-content {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #fff5f8, white);
+            border-radius: 15px;
+            border-left: 4px solid var(--hot-pink);
+            display: none;
+        }
+
+        .reveal-content.shown {
+            display: block;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .envelope {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            min-height: 250px;
+            background: #fdfcf0;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            margin: 20px auto;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            position: relative;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+        }
+
+        .envelope:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(255, 46, 99, 0.2);
+        }
+
+        .envelope-flap {
+            width: 100%;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            background: linear-gradient(to bottom, #f8f1e7, #efe7d8);
+            position: relative;
+            z-index: 2;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .envelope.opened .envelope-flap {
+            opacity: 0;
+            transform: rotateX(180deg) translateY(-100%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .letter-section {
+            padding: 20px;
+            background: white;
+            border-radius: 0 0 5px 5px;
+            max-height: 600px;
+            overflow-y: auto;
+            opacity: 0;
+            transition: opacity 0.6s ease 0.3s;
+        }
+
+        .envelope.opened .letter-section {
+            opacity: 1;
+            z-index: 3;
+        }
+
+        .letter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab-btn {
+            background: white;
+            border: none;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #999;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            bottom: -2px;
+        }
+
+        .tab-btn:hover {
+            color: var(--hot-pink);
+        }
+
+        .tab-btn.active {
+            color: var(--hot-pink);
+            border-bottom-color: var(--hot-pink);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .letter-content, .oath-content {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .letter-content::-webkit-scrollbar, .oath-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .letter-content::-webkit-scrollbar-track, .oath-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .letter-content::-webkit-scrollbar-thumb, .oath-content::-webkit-scrollbar-thumb {
+            background: var(--hot-pink);
+            border-radius: 10px;
+        }
+
+        .letter-content::-webkit-scrollbar-thumb:hover, .oath-content::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        .signature-area {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+
+        .signature-section {
+            display: flex;
+            gap: 30px;
+            justify-content: space-around;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .sig-box {
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .sig-line {
+            border-bottom: 2px solid var(--dark);
+            min-width: 120px;
+            margin-bottom: 5px;
+            height: 50px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            font-family: 'Birthstone', cursive;
+            font-size: 1.5rem;
+            color: var(--hot-pink);
+        }
+
+        .sig-label {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        .canvas-area {
+            margin: 20px 0;
+        }
+
+        canvas {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            cursor: crosshair;
+            width: 100%;
+            height: 120px;
+            display: block;
+        }
+
+        .dots {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 50;
+        }
+
+        .dot-item {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 46, 99, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot-item.active {
+            background: var(--hot-pink);
+            transform: scale(1.4);
+        }
+
+        #pdf-preview {
+            display: none;
+        }
+
+        .success-message {
+            padding: 20px;
+            background: linear-gradient(135deg, #fff5f8, white);
+            border-radius: 10px;
+            border: 2px solid var(--hot-pink);
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 650px) {
+            .view {
+                width: 90%;
+                padding: 35px 25px;
+            }
+            
+            h1 { font-size: 3.5rem; }
+            h2 { font-size: 1.3rem; }
+            
+            .memory-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .signature-section {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <!-- Vue 1: Accueil -->
+    <div class="view active" id="v1">
+        <h1>Ivanna</h1>
+        <p class="subtitle">L'Amour en Équilibre</p>
+        <p class="description">Prête pour une petite aventure remplie de surprises ? 💝</p>
+        <button class="btn-primary" onclick="goToView(1)">Ouvrir mon cœur</button>
+    </div>
+
+    <!-- Vue 2: Progression -->
+    <div class="view" id="v2">
+        <h2>La Persévérance</h2>
+        <p class="subtitle">Charge notre barre de bonheur</p>
+        <p class="description">On s'est arrêtés 100 fois, mais on est là.</p>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+        <p class="progress-text" id="progress-text">0% - Allez, donne de l'amour ! 💕</p>
+        <button class="btn-primary" onclick="addProgress()">Donner de l'amour</button>
+    </div>
+
+    <!-- Vue 3: Memory Game -->
+    <div class="view" id="v3">
+        <h2>Le Jeu des Souvenirs</h2>
+        <p class="subtitle">Retrouve les paires</p>
+        <p class="description">Clique sur les cartes pour trouver les paires 🎮</p>
+        <div class="memory-grid" id="memory"></div>
+        <p class="progress-text" id="memory-count">Trouvées: 0/3</p>
+    </div>
+
+    <!-- Vue 4: Choix -->
+    <div class="view" id="v4">
+        <h2>Nos Fondations</h2>
+        <p class="subtitle">Les 3 piliers essentiels</p>
+        <p class="description">Choisis les éléments qui nous définissent</p>
+        <div class="grid">
+            <div class="choice" onclick="toggleChoice(this)">💑 Complicité</div>
+            <div class="choice" onclick="toggleChoice(this)">🎯 Clarté</div>
+            <div class="choice" onclick="toggleChoice(this)">⚖️ Débats</div>
+            <div class="choice" onclick="toggleChoice(this)">🏀 Rebounds</div>
+            <div class="choice" onclick="toggleChoice(this)">✨ Futur Nom</div>
+            <div class="choice" onclick="toggleChoice(this)">⏳ Patience</div>
+        </div>
+        <button class="btn-primary" onclick="validateChoices()">Confirmer</button>
+    </div>
+
+    <!-- Vue 5: Slider -->
+    <div class="view" id="v5">
+        <h2>À Quel Point M'Aimes-Tu ?</h2>
+        <p class="subtitle">Sois honnête 😊</p>
+        <div class="slider-box">
+            <input type="range" min="0" max="100" value="0" class="slider" id="slider" oninput="updateSlider(this.value)">
+            <p class="progress-text" id="slider-value">0%</p>
+            <p class="description" id="slider-msg" style="margin-top: 20px;">Bouge le curseur...</p>
+        </div>
+        <button class="btn-primary" id="slider-btn" onclick="validateSlider()" disabled style="opacity: 0.5;">Impossible d'avoir 100% avec moi ? 😏</button>
+    </div>
+
+    <!-- Vue 6: Secret -->
+    <div class="view" id="v6">
+        <h2>Un Secret Pour Toi</h2>
+        <p class="subtitle">Clique pour découvrir</p>
+        <button class="reveal-btn" onclick="toggleReveal()">
+            <span id="reveal-icon">🎁</span>
+        </button>
+        <div class="reveal-content" id="reveal-content">
+            <p style="color: var(--hot-pink); font-weight: 600; margin-bottom: 10px;">
+                Tu sais ce qui rend chaque jour spécial ? C'est toi. 💕
+            </p>
+            <p>
+                Tes sourires, tes jokes terribles, ta détermination, ton ambition de juriste... 
+                tout ça me pousse à être meilleur. Tu n'es pas seule dans ce voyage.
+            </p>
+        </div>
+        <div style="margin-top: 25px;">
+            <button class="btn-secondary" onclick="goToView(4)">← Retour</button>
+            <button class="btn-primary" onclick="goToView(6)" style="margin-left: 10px;">Suite →</button>
+        </div>
+    </div>
+
+    <!-- Vue 7: Enveloppe finale -->
+    <div class="view" id="v7">
+        <h2>Dernier Sceau</h2>
+        <p class="subtitle">Ma promesse finale</p>
+        <p class="description">Appuie sur l'enveloppe</p>
+        <div class="envelope" id="envelope" onclick="openEnvelope()">
+            <div class="envelope-flap">❤️</div>
+            <div class="letter-section" id="letter-section" style="display: none;">
+                
+                <!-- Onglets de navigation -->
+                <div class="letter-tabs">
+                    <button class="tab-btn active" onclick="switchTab('letter')">💌 Lettre</button>
+                    <button class="tab-btn" onclick="switchTab('oath')">💍 Serment</button>
+                    <button class="tab-btn" onclick="switchTab('sign')">✍️ Signer</button>
+                </div>
+
+                <!-- TAB 1: Lettre -->
+                <div class="tab-content active" id="tab-letter">
+                    <div class="letter-content">
+                        <p style="font-family: 'Birthstone', cursive; font-size: 1.8rem; color: var(--hot-pink); margin: 10px 0;">
+                            Ma chère Naman Ivanna,
+                        </p>
+                        <p style="margin: 12px 0;">
+                            Ces deux ans n'ont pas été un long fleuve tranquille, mais quelle magnifique rivière nous avons tracée ensemble.
+                        </p>
+                        <p style="margin: 12px 0;">
+                            Quitter, revenir, essayer, réussir... On a tout fait. Et c'est dans ces moments d'incertitude que j'ai compris: 
+                            je ne veux pas seulement vivre, je veux vivre <strong>avec toi</strong>.
+                        </p>
+                        <p style="margin: 12px 0;">
+                            Je suis fier de la femme que tu es, de la juriste brillante que tu deviens et de la <strong>Diabaté</strong> 
+                            que tu seras bientôt.
+                        </p>
+                        <p style="margin: 12px 0;">
+                            Pas de papier ici, juste du code et mon âme brute. Attends-toi au concret très bientôt... 💎
+                        </p>
+                        <p style="font-family: 'Birthstone', cursive; font-size: 1.5rem; color: var(--hot-pink); margin-top: 20px;">
+                            Ton Marc-Elie 💕
+                        </p>
+                    </div>
+                    <button class="btn-secondary" onclick="downloadLetter()" style="width: 100%; margin-top: 20px;">📥 Télécharger la lettre (PDF)</button>
+                </div>
+
+                <!-- TAB 2: Serment -->
+                <div class="tab-content" id="tab-oath">
+                    <div class="oath-content">
+                        <p style="font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--hot-pink); margin: 15px 0; font-weight: 700;">
+                            ✨ CONTRAT D'AMOUR ÉTERNEL ✨
+                        </p>
+                        <p style="margin: 20px 0; font-size: 0.95rem; line-height: 1.8;">
+                            En ce jour, nous nous promettons mutuellement :
+                        </p>
+                        <p style="margin: 15px 0; font-style: italic; line-height: 1.8;">
+                            Nous nous promettons une <strong>fidélité à vie</strong>,<br>
+                            Nous nous promettons de nous <strong>unir par le mariage</strong>,<br>
+                            Nous nous promettons de passer les restants de nos jours ensemble,<br>
+                            Nous nous promettons un <strong>soutien mutuel</strong> dans chaque épreuve,<br>
+                            Nous nous promettons de célébrer chaque victoire côte à côte,<br>
+                            Et nous nous promettons de nous aimer plus fort que jamais, chaque jour.
+                        </p>
+                        <p style="margin: 20px 0; font-size: 0.9rem; color: #666;">
+                            Ceci est notre promesse solennelle, notre engagement éternel.
+                        </p>
+                    </div>
+                    <button class="btn-secondary" id="oath-download-btn" onclick="downloadOathWithSignature()" style="width: 100%; margin-top: 20px; opacity: 0.5; cursor: not-allowed;" disabled>
+                        📥 Télécharger le serment (signé)
+                    </button>
+                    <p style="font-size: 0.8rem; color: #999; margin-top: 10px;">
+                        Vous devez signer le serment pour le télécharger
+                    </p>
+                </div>
+
+                <!-- TAB 3: Signer -->
+                <div class="tab-content" id="tab-sign">
+                    <p style="margin-bottom: 15px; color: #666;">Signez le serment avec votre doigt ou votre souris 💍</p>
+                    
+                    <div class="canvas-area">
+                        <p style="font-size: 0.85rem; color: #999; margin-bottom: 10px;">Signature d'Ivanna</p>
+                        <canvas id="signature-pad"></canvas>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn-secondary" onclick="clearSignature()" style="flex: 1; margin: 0;">🗑️ Effacer</button>
+                        <button class="btn-primary" onclick="confirmSignature()" style="flex: 1; margin: 0;">💍 Confirmer la signature</button>
+                    </div>
+
+                    <div id="final-message" style="display: none; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #fff5f8, white); border-radius: 10px; border: 2px solid var(--hot-pink); text-align: center;">
+                        <p style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--hot-pink); margin: 0; font-weight: 700;">
+                            ✨ Par le pouvoir de l'amour ✨
+                        </p>
+                        <p style="margin: 15px 0; color: var(--dark); font-weight: 600;">
+                            Je vous déclare <strong>Mari et Femme</strong> 💍
+                        </p>
+                        <p style="margin: 10px 0; color: #666; font-size: 0.95rem;">
+                            Selon l'article du cœur qui prime tous les codes civils,<br>
+                            vous êtes à jamais unis.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <p style="margin-top: 30px; font-size: 0.85rem; color: #999;">
+            ✨ Construite avec amour et beaucoup de caféine ✨
+        </p>
+    </div>
+</div>
+
+<!-- Canvas caché pour générer le PDF du serment -->
+<canvas id="oath-canvas" style="display: none;"></canvas>
+<div id="pdf-preview" style="display: none;"></div>
+
+<div class="dots" id="dots"></div>
+
+<script>
+    const VIEWS = ['v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7'];
+    let currentView = 0;
+    let signatureDrawn = false;
+    let signatureImageData = null;
+
+    // Navigation
+    function goToView(index) {
+        const views = document.querySelectorAll('.view');
+        views[currentView].classList.remove('active');
+        currentView = index;
+        views[currentView].classList.add('active');
+        updateDots();
+        
+        if (index === 1) resetProgress();
+        if (index === 2) initMemory();
+        if (index === 4) resetSlider();
+    }
+
+    // Dots
+    function initDots() {
+        const dots = document.getElementById('dots');
+        VIEWS.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'dot-item' + (i === 0 ? ' active' : '');
+            dot.onclick = () => goToView(i);
+            dots.appendChild(dot);
+        });
+    }
+
+    function updateDots() {
+        document.querySelectorAll('.dot-item').forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentView);
+        });
+    }
+
+    // Jeu 1: Progress
+    let progress = 0;
+    function resetProgress() {
+        progress = 0;
+        document.getElementById('progress').style.width = '0%';
+        document.getElementById('progress-text').textContent = '0% - Allez, donne de l\'amour ! 💕';
+    }
+
+    function addProgress() {
+        progress += 15;
+        if (progress > 100) progress = 100;
+        document.getElementById('progress').style.width = progress + '%';
+        
+        const msgs = [
+            '15% - C\'est un début 💕',
+            '30% - On y croit ! 🔥',
+            '45% - C\'est magnifique ! ✨',
+            '60% - Presque là ! 🚀',
+            '75% - Oh tu l\'aimes ! 😍',
+            '90% - Tu me fais rougir ! 🌹',
+            '100% - JE T\'AIME ! ❤️❤️❤️'
+        ];
+        
+        document.getElementById('progress-text').textContent = msgs[Math.floor(progress / 15)] || msgs[6];
+        
+        if (progress === 100) {
+            confetti({ particleCount: 80, spread: 70, origin: { y: 0.4 } });
+            setTimeout(() => goToView(2), 800);
+        }
+    }
+
+    // Jeu 2: Memory
+    const pairs = [
+        { emoji: '💕', id: 'love' },
+        { emoji: '🎯', id: 'clarity' },
+        { emoji: '❤️', id: 'passion' }
+    ];
+
+    let cards = [];
+    let flipped = [];
+    let locked = false;
+
+    function initMemory() {
+        cards = [...pairs, ...pairs].sort(() => Math.random() - 0.5);
+        const grid = document.getElementById('memory');
+        grid.innerHTML = '';
+        cards.forEach((card, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'card';
+            btn.textContent = '?';
+            btn.dataset.id = i;
+            btn.dataset.pair = card.id;
+            btn.onclick = () => flipCard(btn);
+            grid.appendChild(btn);
+        });
+    }
+
+    function flipCard(el) {
+        if (locked || el.classList.contains('matched') || flipped.includes(el)) return;
+        
+        const card = cards[el.dataset.id];
+        el.textContent = card.emoji;
+        flipped.push(el);
+        
+        if (flipped.length === 2) {
+            locked = true;
+            if (flipped[0].dataset.pair === flipped[1].dataset.pair) {
+                flipped.forEach(c => c.classList.add('matched'));
+                const matched = document.querySelectorAll('.card.matched').length / 2;
+                document.getElementById('memory-count').textContent = `Trouvées: ${matched}/3`;
+                if (matched === 3) {
+                    confetti({ particleCount: 80, spread: 60 });
+                    setTimeout(() => goToView(3), 800);
+                }
+                flipped = [];
+                locked = false;
+            } else {
+                setTimeout(() => {
+                    flipped.forEach(c => c.textContent = '?');
+                    flipped = [];
+                    locked = false;
+                }, 1000);
+            }
+        }
+    }
+
+    // Jeu 3: Choix
+    function toggleChoice(el) {
+        const selected = document.querySelectorAll('.choice.selected').length;
+        if (!el.classList.contains('selected') && selected >= 3) {
+            alert('Max 3 ! 😊');
+            return;
+        }
+        el.classList.toggle('selected');
+    }
+
+    function validateChoices() {
+        if (document.querySelectorAll('.choice.selected').length >= 3) {
+            confetti({ particleCount: 60, spread: 50 });
+            setTimeout(() => goToView(4), 600);
+        } else {
+            alert('Choisis 3 piliers ! 💪');
+        }
+    }
+
+    // Jeu 4: Slider
+    function resetSlider() {
+        document.getElementById('slider').value = 0;
+        document.getElementById('slider-btn').disabled = true;
+        document.getElementById('slider-btn').style.opacity = '0.5';
+        updateSlider(0);
+    }
+
+    function updateSlider(val) {
+        document.getElementById('slider-value').textContent = val + '%';
+        const msgs = {
+            0: 'Bouge le curseur...',
+            20: '😢 C\'est tout ?',
+            40: '🤔 On avance...',
+            60: '😊 Mieux !',
+            80: '😍 Presque...',
+            100: '❤️ JE LE SAVAIS ! 💕'
+        };
+        const key = Math.floor(val / 20) * 20;
+        document.getElementById('slider-msg').textContent = msgs[key] || msgs[0];
+        
+        if (val >= 100) {
+            document.getElementById('slider-btn').disabled = false;
+            document.getElementById('slider-btn').style.opacity = '1';
+            document.getElementById('slider-btn').textContent = '✨ Tu m\'aimes vraiment ! ✨';
+        }
+    }
+
+    function validateSlider() {
+        if (document.getElementById('slider').value >= 100) {
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+            setTimeout(() => goToView(5), 800);
+        }
+    }
+
+    // Jeu 5: Révélation
+    function toggleReveal() {
+        document.getElementById('reveal-content').classList.toggle('shown');
+        document.getElementById('reveal-icon').textContent = 
+            document.getElementById('reveal-content').classList.contains('shown') ? '💝' : '🎁';
+    }
+
+    // Enveloppe
+    function openEnvelope() {
+        const envelope = document.getElementById('envelope');
+        if (!envelope.classList.contains('opened')) {
+            envelope.classList.add('opened');
+            setTimeout(() => {
+                document.getElementById('letter-section').style.display = 'block';
+            }, 300);
+        }
+    }
+
+    // Gestion des onglets
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+        event.target.classList.add('active');
+        
+        if (tabName === 'sign') {
+            setTimeout(() => {
+                initSignaturePad();
+            }, 100);
+        }
+    }
+
+    // Signature Canvas
+    let signatureCanvas, signatureCtx, isDrawing = false;
+
+    function initSignaturePad() {
+        signatureCanvas = document.getElementById('signature-pad');
+        if (!signatureCanvas || !signatureCanvas.offsetParent) return;
+        
+        signatureCtx = signatureCanvas.getContext('2d');
+        const rect = signatureCanvas.getBoundingClientRect();
+        
+        signatureCanvas.width = rect.width * window.devicePixelRatio;
+        signatureCanvas.height = rect.height * window.devicePixelRatio;
+        
+        signatureCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        signatureCtx.lineCap = 'round';
+        signatureCtx.lineJoin = 'round';
+        signatureCtx.lineWidth = 2.5;
+        signatureCtx.strokeStyle = '#2a2a2a';
+        
+        signatureCanvas.addEventListener('mousedown', startDrawing);
+        signatureCanvas.addEventListener('mousemove', draw);
+        signatureCanvas.addEventListener('mouseup', stopDrawing);
+        signatureCanvas.addEventListener('mouseout', stopDrawing);
+        
+        signatureCanvas.addEventListener('touchstart', handleTouch);
+        signatureCanvas.addEventListener('touchmove', handleTouch);
+        signatureCanvas.addEventListener('touchend', stopDrawing);
+    }
+
+    function startDrawing(e) {
+        isDrawing = true;
+        const rect = signatureCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        signatureCtx.beginPath();
+        signatureCtx.moveTo(x, y);
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        const rect = signatureCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        signatureCtx.lineTo(x, y);
+        signatureCtx.stroke();
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+        signatureCtx.closePath();
+    }
+
+    function handleTouch(e) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 'mousemove', {
+            clientX: touch.clientX,
+            clientY: touch.clientY
+        });
+        signatureCanvas.dispatchEvent(mouseEvent);
+    }
+
+    function clearSignature() {
+        signatureCtx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+        signatureDrawn = false;
+    }
+
+    function confirmSignature() {
+        const canvas = document.getElementById('signature-pad');
+        const imageData = canvas.toDataURL('image/png');
+        
+        const ctx = canvas.getContext('2d');
+        const imageDataObj = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        let hasDrawing = false;
+        
+        for (let i = 3; i < imageDataObj.data.length; i += 4) {
+            if (imageDataObj.data[i] > 128) {
+                hasDrawing = true;
+                break;
+            }
+        }
+        
+        if (!hasDrawing) {
+            alert('Veuillez signer d\'abord ! 💍');
+            return;
+        }
+        
+        signatureImageData = imageData;
+        signatureDrawn = true;
+        
+        // Afficher la signature signée
+        const signatureContainer = document.createElement('div');
+        signatureContainer.style.marginTop = '20px';
+        signatureContainer.style.padding = '15px';
+        signatureContainer.style.background = '#f9f9f9';
+        signatureContainer.style.borderRadius = '10px';
+        signatureContainer.style.textAlign = 'center';
+        
+        const signatureImg = document.createElement('img');
+        signatureImg.src = imageData;
+        signatureImg.style.maxWidth = '100%';
+        signatureImg.style.height = 'auto';
+        signatureImg.style.borderRadius = '8px';
+        signatureImg.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+        
+        signatureContainer.appendChild(signatureImg);
+        canvas.parentElement.insertBefore(signatureContainer, canvas.nextSibling);
+        
+        // Cacher le canvas et les boutons
+        canvas.style.display = 'none';
+        document.querySelectorAll('#tab-sign .btn-secondary, #tab-sign .btn-primary').forEach(btn => {
+            btn.style.display = 'none';
+        });
+        
+        // Activer le bouton de téléchargement du serment
+        document.getElementById('oath-download-btn').disabled = false;
+        document.getElementById('oath-download-btn').style.opacity = '1';
+        document.getElementById('oath-download-btn').style.cursor = 'pointer';
+        
+        // Afficher le message final
+        document.getElementById('final-message').style.display = 'block';
+        
+        setTimeout(() => {
+            confetti({
+                particleCount: 300,
+                spread: 100,
+                origin: { y: 0.5 },
+                colors: ['#ff2e63', '#d4af37', '#ffafcc', '#ff6b9d']
+            });
+        }, 500);
+    }
+
+    // Télécharger la lettre en PDF
+    function downloadLetter() {
+        const letterContent = `
+        <div style="padding: 40px; font-family: 'Montserrat', sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="font-family: 'Birthstone', cursive; font-size: 2.5rem; color: #ff2e63; text-align: center; margin-bottom: 30px;">
+                Ma chère Naman Ivanna
+            </h1>
+            
+            <p style="font-size: 16px; line-height: 1.8; color: #333; margin: 20px 0;">
+                Ces deux ans n'ont pas été un long fleuve tranquille, mais quelle magnifique rivière nous avons tracée ensemble.
+            </p>
+            
+            <p style="font-size: 16px; line-height: 1.8; color: #333; margin: 20px 0;">
+                Quitter, revenir, essayer, réussir... On a tout fait. Et c'est dans ces moments d'incertitude que j'ai compris: 
+                je ne veux pas seulement vivre, je veux vivre <strong>avec toi</strong>.
+            </p>
+            
+            <p style="font-size: 16px; line-height: 1.8; color: #333; margin: 20px 0;">
+                Je suis fier de la femme que tu es, de la juriste brillante que tu deviens et de la <strong>Diabaté</strong> 
+                que tu seras bientôt.
+            </p>
+            
+            <p style="font-size: 16px; line-height: 1.8; color: #333; margin: 20px 0;">
+                Pas de papier ici, juste du code et mon âme brute. Attends-toi au concret très bientôt... 💎
+            </p>
+            
+            <p style="font-family: 'Birthstone', cursive; font-size: 1.8rem; color: #ff2e63; text-align: right; margin-top: 40px;">
+                Ton Marc-Elie 💕
+            </p>
+            
+            <p style="text-align: center; margin-top: 50px; font-size: 12px; color: #999;">
+                ✨ Construite avec amour et beaucoup de caféine ✨
+            </p>
+        </div>
+        `;
+
+        const opt = {
+            margin: 10,
+            filename: 'Lettre_Ivanna.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+        };
+
+        html2pdf().set(opt).from(letterContent).save();
+    }
+
+    // Télécharger le serment avec signature en PDF/JPEG
+    function downloadOathWithSignature() {
+        if (!signatureDrawn) {
+            alert('Veuillez d\'abord signer le serment ! 💍');
+            return;
+        }
+
+        // Créer un canvas pour le serment + signature
+        const canvas = document.createElement('canvas');
+        canvas.width = 800;
+        canvas.height = 1200;
+        const ctx = canvas.getContext('2d');
+
+        // Fond blanc
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, 800, 1200);
+
+        // Titre
+        ctx.font = 'bold 32px Playfair Display';
+        ctx.fillStyle = '#ff2e63';
+        ctx.textAlign = 'center';
+        ctx.fillText('✨ CONTRAT D\'AMOUR ÉTERNEL ✨', 400, 80);
+
+        // Texte intro
+        ctx.font = '16px Montserrat';
+        ctx.fillStyle = '#333';
+        ctx.textAlign = 'center';
+        ctx.fillText('En ce jour, nous nous promettons mutuellement :', 400, 140);
+
+        // Serment
+        const oathText = [
+            'Nous nous promettons une FIDÉLITÉ À VIE,',
+            'Nous nous promettons de nous UNIR PAR LE MARIAGE,',
+            'Nous nous promettons de passer les restants de nos jours ensemble,',
+            'Nous nous promettons un SOUTIEN MUTUEL dans chaque épreuve,',
+            'Nous nous promettons de célébrer chaque victoire côte à côte,',
+            'Et nous nous promettons de nous aimer plus fort que jamais, chaque jour.'
+        ];
+
+        ctx.font = 'italic 14px Montserrat';
+        ctx.fillStyle = '#555';
+        let y = 200;
+        oathText.forEach(line => {
+            ctx.fillText(line, 400, y);
+            y += 40;
+        });
+
+        // Ligne de séparation
+        ctx.strokeStyle = '#ddd';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(100, y + 20);
+        ctx.lineTo(700, y + 20);
+        ctx.stroke();
+
+        // Signatures section
+        y += 80;
+        
+        // Signature Marc-Elie (Elie pré-dessiné)
+        ctx.font = 'italic 32px Birthstone';
+        ctx.fillStyle = '#ff2e63';
+        ctx.textAlign = 'center';
+        ctx.fillText('Elie', 175, y);
+        
+        ctx.font = 'bold 14px Montserrat';
+        ctx.fillStyle = '#333';
+        ctx.textAlign = 'center';
+        ctx.fillText('Marc-Elie', 175, y + 60);
+        
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(100, y + 30);
+        ctx.lineTo(250, y + 30);
+        ctx.stroke();
+        
+        // Signature Ivanna (image dessinée)
+        const sigImg = new Image();
+        sigImg.src = signatureImageData;
+        sigImg.onload = () => {
+            // Afficher la signature dessinée
+            ctx.drawImage(sigImg, 500, y - 40, 150, 80);
+            
+            // Ligne sous la signature
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(500, y + 30);
+            ctx.lineTo(650, y + 30);
+            ctx.stroke();
+            
+            ctx.font = 'bold 14px Montserrat';
+            ctx.fillStyle = '#333';
+            ctx.textAlign = 'center';
+            ctx.fillText('Ivanna', 575, y + 60);
+            
+            // Texte final
+            ctx.font = '12px Montserrat';
+            ctx.fillStyle = '#666';
+            ctx.textAlign = 'center';
+            ctx.fillText('Selon l\'article du cœur qui prime tous les codes civils,', 400, y + 150);
+            ctx.fillText('vous êtes à jamais unis. 💍', 400, y + 180);
+            
+            // Télécharger en JPEG
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/jpeg', 0.95);
+            link.download = `Serment_Mariage_${new Date().getTime()}.jpeg`;
+            link.click();
+        };
+    }
+
+    // Init
+    window.addEventListener('load', () => {
+        initDots();
+    });
+</script>
+
+</body>
+</html>

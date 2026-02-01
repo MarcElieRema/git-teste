@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pour ma Princesse - Divine Merveille</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --royal-gold: #d4af37;
+            --deep-ivory: #e8d5a7; /* Teinte parchemin plus proche de l'image */
+            --velvet-red: #660000;
+        }
+
+        body {
+            background: #000;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            perspective: 1200px; /* Pour l'effet 3D de l'image */
+        }
+
+        /* Effet de lumière en arrière-plan comme sur l'image */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+        }
+
+        /* --- ÉCRAN D'ENTRÉE --- */
+        #gate {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: 2s ease-in-out;
+        }
+
+        .crown-btn {
+            background: none;
+            border: 2px solid var(--royal-gold);
+            color: var(--royal-gold);
+            padding: 20px 40px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            cursor: pointer;
+            letter-spacing: 5px;
+            transition: 0.5s;
+            text-transform: uppercase;
+        }
+
+        .crown-btn:hover {
+            background: var(--royal-gold);
+            color: black;
+            box-shadow: 0 0 30px var(--royal-gold);
+        }
+
+        /* --- LA LETTRE ROYALE (DESIGN IMAGE) --- */
+        .parchemin {
+            width: 600px;
+            max-width: 85%;
+            background: var(--deep-ivory);
+            padding: 50px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.2);
+            
+            /* Bordures dorées ornementales */
+            border: 15px solid transparent;
+            border-image: url('https://www.transparenttextures.com/patterns/gold-glitter.png') 30 stretch;
+            outline: 2px solid var(--royal-gold);
+            outline-offset: -10px;
+
+            /* Effet d'inclinaison 3D comme sur la photo */
+            opacity: 0;
+            transform: rotateX(20deg) rotateY(-5deg) rotateZ(2deg) scale(0.8) translateY(100px);
+            transition: 3s all cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .parchemin.open {
+            opacity: 1;
+            transform: rotateX(15deg) rotateY(-2deg) rotateZ(1deg) scale(1) translateY(0);
+        }
+
+        /* Coins ornementaux */
+        .parchemin::before, .parchemin::after {
+            content: '✿';
+            position: absolute;
+            color: var(--royal-gold);
+            font-size: 2rem;
+            opacity: 0.6;
+        }
+        .parchemin::before { top: 15px; left: 15px; }
+        .parchemin::after { bottom: 15px; right: 15px; }
+
+        .header-palace {
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+        }
+
+        .titre-royal {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.5rem;
+            color: var(--velvet-red);
+            margin: 5px 0;
+        }
+
+        .nom-complet {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: #222;
+            font-weight: bold;
+        }
+
+        /* --- ACROSTICHE --- */
+        .acrostiche-container {
+            margin: 30px 0;
+        }
+
+        .letter-row {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: baseline;
+        }
+
+        .drop-cap {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--royal-gold);
+            min-width: 40px;
+        }
+
+        .verse-text {
+            font-size: 1rem;
+            line-height: 1.4;
+            color: #333;
+            font-style: italic;
+        }
+
+        .citation {
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            margin: 30px 0;
+            padding: 15px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            color: #444;
+            font-size: 0.9rem;
+        }
+
+        .signature-area {
+            text-align: center; /* Centré comme sur le bas de l'image */
+            margin-top: 30px;
+        }
+
+        .sign {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            color: var(--velvet-red);
+            margin-top: -10px;
+        }
+
+        /* --- ANIMATIONS --- */
+        .petal {
+            position: fixed;
+            top: -50px;
+            pointer-events: none;
+            z-index: 50;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        .sparkle {
+            position: fixed;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 10px white;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="gate">
+        <h1 style="color:white; font-family:'Cinzel'; margin-bottom:50px; letter-spacing:10px;">PRINCESSE</h1>
+        <button class="crown-btn" onclick="reveal()">Entrer dans son cœur</button>
+    </div>
+
+    <div class="parchemin" id="parchemin">
+        <div class="header-palace">
+            <p style="font-family:'Cinzel'; font-size:0.8rem; color:#555;">Abidjan, ce 1er Février 2026</p>
+            <h1 class="titre-royal">Ma Princesse</h1>
+            <p class="nom-complet">Divine Merveille Ivanna-Moïra</p>
+        </div>
+
+        <div class="acrostiche-container">
+<div class="letter-row">
+  <span class="drop-cap">M</span>
+  <span class="verse-text">Mon amour, tu es ce calme qui apaise mes tempêtes.</span>
+</div>
+
+<div class="letter-row">
+  <span class="drop-cap">A</span>
+  <span class="verse-text">À tes côtés, le monde devient simple et juste.</span>
+</div>
+
+<div class="letter-row">
+  <span class="drop-cap">R</span>
+  <span class="verse-text">Rien n’a plus de valeur que ta présence dans ma vie.</span>
+</div>
+
+<div class="letter-row">
+  <span class="drop-cap">C</span>
+  <span class="verse-text">Chaque jour, je te choisis, encore et pour toujours.</span>
+</div>
+
+<div class="letter-row">
+  <span class="drop-cap">E</span>
+  <span class="verse-text">Et si je dois promettre une chose, c’est de t’aimer fidèlement.</span>
+</div>
+
+        </div>
+
+        <div class="citation">
+   “Aimer vraiment, ce n’est pas promettre l’éternité,
+c’est décider chaque jour de ne pas s’en détourner.”
+<br>
+<small style="color:var(--royal-gold)">— Marc-Elie Diabaté</small>
+
+        </div>
+
+        <div class="signature-area">
+            <p style="margin:0; font-family:'Cinzel'; font-size:0.7rem; color:#888; letter-spacing:2px;">TON ÉTERNEL CHEVALIER</p>
+            <div class="sign">Marc-Elie</div>
+        </div>
+    </div>
+
+    <script>
+        // Création d'étoiles de fond fixes dès le départ
+        for(let i=0; i<100; i++) {
+            let s = document.createElement('div');
+            s.className = 'sparkle';
+            s.style.width = Math.random()*3 + 'px';
+            s.style.height = s.style.width;
+            s.style.left = Math.random()*100 + 'vw';
+            s.style.top = Math.random()*100 + 'vh';
+            s.style.animationDelay = Math.random()*2 + 's';
+            document.body.appendChild(s);
+        }
+
+        function reveal() {
+            document.getElementById('gate').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('gate').style.display = 'none';
+                document.getElementById('parchemin').classList.add('open');
+                setInterval(createPetal, 400);
+            }, 2000);
+        }
+
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            const icons = ['🌸', '✨', '🍂'];
+            petal.innerHTML = icons[Math.floor(Math.random()*icons.length)];
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.fontSize = Math.random() * 20 + 10 + 'px';
+            petal.style.animationDuration = Math.random() * 3 + 4 + 's';
+            petal.style.opacity = Math.random() * 0.6;
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), 7000);
+        }
+    </script>
+</body>
+</html>
