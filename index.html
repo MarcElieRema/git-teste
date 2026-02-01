@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pour Annie - Une pensée particulière</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Parisienne&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bordeaux: #8e1b30;
+            --or-doux: #c5a059;
+            --fond: #fcfaf7;
+        }
+
+        body {
+            background-color: #dfd3c3; /* Couleur table en bois clair */
+            background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+            color: #2c2c2c;
+            font-family: 'Cormorant Garamond', serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- ÉCRAN D'ACCUEIL --- */
+        #welcome-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #1a1a1a;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 2s ease;
+        }
+        
+        .btn-enter {
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: transparent;
+            border: 1px solid var(--or-doux);
+            color: var(--or-doux);
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            text-transform: uppercase;
+        }
+        .btn-enter:hover { background: var(--or-doux); color: white; box-shadow: 0 0 20px rgba(197, 160, 89, 0.4); }
+
+        /* --- LA LETTRE --- */
+        .lettre {
+            max-width: 700px;
+            width: 90%;
+            margin: 50px auto;
+            background: var(--fond);
+            padding: 60px 80px;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 2.5s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Effet papier parchemin */
+        .lettre::before {
+            content: "";
+            position: absolute;
+            top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: 1px solid #efe5d5;
+            pointer-events: none;
+        }
+
+        .lettre.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- CONTENU --- */
+        .en-tete {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .date-fete {
+            font-style: italic;
+            color: var(--or-doux);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .photo-cadre {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .photo-cadre img { width: 100%; height: 100%; object-fit: cover; }
+
+        .acrostiche {
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .ligne-poeme {
+            margin-bottom: 30px;
+            font-size: 1.4rem;
+            line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .initiale {
+            font-family: 'Parisienne', cursive;
+            font-size: 3.2rem;
+            color: var(--bordeaux);
+            margin-right: 15px;
+            line-height: 0.7;
+            margin-top: 10px;
+        }
+
+        .verset {
+            text-align: center;
+            font-style: italic;
+            border-top: 1px double var(--or-doux);
+            border-bottom: 1px double var(--or-doux);
+            padding: 20px 0;
+            margin: 50px 0;
+            color: #555;
+        }
+
+        .conclusion {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+        }
+
+        /* --- DECO : LA ROSE --- */
+        .rose-deco {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .rose-svg {
+            width: 60px;
+            fill: var(--bordeaux);
+            opacity: 0.8;
+        }
+
+        /* --- SIGNATURE ET SCEAU --- */
+        .footer {
+            text-align: right;
+            position: relative;
+            margin-top: 60px;
+        }
+
+        .signature {
+            font-family: 'Parisienne', cursive;
+            font-size: 2.8rem;
+            color: var(--bordeaux);
+        }
+
+        .sceau-cire {
+            position: absolute;
+            bottom: -30px;
+            left: 0;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(#be123c, #8e1b30);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #f1d5a5;
+            font-family: 'Parisienne';
+            font-size: 1.8rem;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            transform: rotate(-10deg);
+            border: 2px solid #a61633;
+        }
+
+        /* --- ANIMATIONS CŒURS --- */
+        .heart {
+            position: fixed; top: -1vh; z-index: 10;
+            pointer-events: none; animation: fall linear forwards;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        @media (max-width: 600px) {
+            .lettre { padding: 40px 30px; width: 85%; }
+            .ligne-poeme { font-size: 1.1rem; }
+            .initiale { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="musique.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="welcome-screen">
+        <div style="font-family: 'Parisienne', cursive; font-size: 3.5rem; color: var(--or-doux);">Pour Annie</div>
+        <p style="letter-spacing: 4px; font-weight: 300;">UNE LETTRE PERSONNELLE</p>
+        <button class="btn-enter" onclick="ouvrirLettre()">Décacheter la lettre</button>
+    </div>
+
+    <div class="lettre" id="maLettre">
+        <div class="en-tete">
+            <div class="date-fete">Abidjan, ce 2 Février 2026</div>
+            <div class="photo-cadre">
+                <img src="image.jpeg" alt="Annie">
+            </div>
+            <div style="font-size: 0.9rem; letter-spacing: 3px; color: #999;">À MA TRÈS CHÈRE ANNIE</div>
+        </div>
+
+        <div class="rose-deco">
+            <svg class="rose-svg" viewBox="0 0 512 512"><path d="M256.4 141.5c-15.6-35.1-55.8-56.1-92.4-44.5-31.5 10-48.4 43.6-41.2 75.3 5 22.4 18.2 41.6 34.6 56.4 11.2 10.1 23.3 18.5 35.1 27.5 7.6 5.8 15.3 11.7 22.5 18 20.4-17.6 44.8-31.3 62-55.7 12.3-17.5 10.9-46.1-20.6-77zM256 312c-15.1-15.3-32.3-29.2-48-44.1-12.7-12-25.1-25.2-34.8-40.3-4.1-6.5-7.3-13.6-9-21-2.4-10.4-1.9-21.7 1.2-32 3.6-11.8 10.2-22.3 18.9-30.4 16.3-15 40.5-20 61.2-12.9 21.6 7.4 36.3 27 38.6 49.3 2 18.3-4 35.9-13.8 51.1-11.8 18.3-27.4 34.6-43.1 50.3l28.8 30.1c11.3-13.1 22.6-26.2 33.4-39.7 12.2-15.4 23.1-31.9 29.5-50.5 5.2-15.1 6.8-31.6 4.3-47.5-3-18.7-11.7-36.2-25.5-49.3-19.4-18.3-48.2-23.7-72.9-13.6-28.5 11.6-47.8 40.2-47.5 71 0.2 18.9 6.8 36.9 17.1 52.6 11.6 17.8 26.6 33.5 42.4 48.3l18.8 18.7z"/></svg>
+        </div>
+
+        <div class="acrostiche">
+            <div class="ligne-poeme"><span class="initiale">A</span>u-delà de ta beauté évidente, il y a ton âme qui parle doucement, et c’est elle qui m’a captivé.</div>
+            <div class="ligne-poeme"><span class="initiale">N</span>on seulement tu es intelligente et inspirante, mais tu incarnes exactement ce que je recherche chez une femme.</div>
+            <div class="ligne-poeme"><span class="initiale">N</span>’aie jamais peur de tes silences ni de tes moments de doute : je veux que tu saches que tu peux compter sur moi, sincèrement.</div>
+            <div class="ligne-poeme"><span class="initiale">I</span>ci, aujourd’hui et demain, je choisis d’être une présence sûre, un appui, quelqu’un en qui tu peux avoir confiance.</div>
+            <div class="ligne-poeme"><span class="initiale">E</span>t en ce jour, je ne te souhaite pas seulement un joyeux anniversaire, mais une année remplie de paix et de certitudes.</div>
+        </div>
+
+        <div class="verset">
+            « L'Éternel est près de ceux qui ont le cœur brisé »<br>
+            <small>— PSAUMES 34:18 —</small>
+        </div>
+
+        <div class="conclusion">
+            Il est près de toi, il ne t'a jamais abandonnée et je peux t'assurer que son humble serviteur est là pour toi aussi.
+        </div>
+
+        <div class="footer">
+            <div class="sceau-cire">M</div>
+            <div style="font-size: 1.1rem;">Avec toute mon affection,</div>
+            <div class="signature">Ton Manu</div>
+        </div>
+    </div>
+
+    <script>
+        function ouvrirLettre() {
+            const welcome = document.getElementById('welcome-screen');
+            const lettre = document.getElementById('maLettre');
+            const music = document.getElementById('bg-music');
+
+            music.play().catch(e => console.log("Audio en attente"));
+
+            welcome.style.opacity = '0';
+            setTimeout(() => {
+                welcome.style.display = 'none';
+                lettre.classList.add('visible');
+                // Pluie de coeurs plus lente et élégante
+                setInterval(createHeart, 800);
+            }, 2000);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            const icons = ['❤️', '💙', '✨', '🌸'];
+            heart.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.fontSize = (Math.random() * 10 + 10) + "px";
+            heart.style.animationDuration = (Math.random() * 5 + 5) + "s";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 10000);
+        }
+    </script>
+
+</body>
+</html>
